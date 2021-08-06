@@ -11,7 +11,4 @@ defmodule Jsonrpc do
   def start_link(opts) do
     Finch.start_link(opts)
   end
-
-  def request() do
-  end
 end
