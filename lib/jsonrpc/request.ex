@@ -10,6 +10,7 @@ defmodule Jsonrpc.Request do
           id: String.t() | integer() | nil
         }
 
+  @derive Jason.Encoder
   @enforce_keys [:jsonrpc, :method]
   defstruct [:jsonrpc, :method, :params, :id]
 
@@ -31,14 +32,20 @@ defmodule Jsonrpc.Request do
     |> add_id(opts |> Keyword.get(:id, :not_given))
   end
 
-  defp add_params(req, :not_given), do: req
+  defp add_params(req, :not_given) do
+    req
+    |> Map.put(:params, [])
+  end
 
   defp add_params(req, params) do
     req
     |> Map.put(:params, params)
   end
 
-  defp add_id(req, :not_given), do: req
+  defp add_id(req, :not_given) do
+    req
+    |> Map.put(:id, 0)
+  end
 
   defp add_id(req, id) when is_binary(id) or is_integer(id) or is_nil(id) do
     req
@@ -48,15 +55,18 @@ defmodule Jsonrpc.Request do
   defp add_id(_req, _id), do: raise("ID is invalid: should be a string an integer or nil")
 
   def new(req = %__MODULE__{}, opts) when is_list(opts) do
-    [req] ++ [new(opts)]
+    [new(opts) | [req]]
   end
 
   def new(req_list, opts) when is_list(opts) do
-    req_list ++ [new(opts)]
+    [new(opts) | req_list]
   end
 
-  def add_ids(req_list, starting_number \\ 1) when is_list(req_list) do
+  def order(req_list, starting_number \\ 1)
+
+  def order(req_list, starting_number) when is_list(req_list) do
     req_list
+    |> Enum.reverse()
     |> Enum.reduce({starting_number, []}, fn req, {req_id, requests} ->
       req =
         req
@@ -66,6 +76,8 @@ defmodule Jsonrpc.Request do
     end)
     |> unwrap_requests()
   end
+
+  def order(req, _starting_number), do: req
 
   defp unwrap_requests({_req_id, requests}), do: requests
 end
