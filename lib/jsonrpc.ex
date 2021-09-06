@@ -1,4 +1,7 @@
 defmodule Jsonrpc do
+  require Logger
+  alias Jsonrpc.Response
+
   def child_spec(opts) do
     name = opts |> Keyword.get(:name) || raise "You must supply a name"
 
@@ -15,23 +18,28 @@ defmodule Jsonrpc do
   def request(request, options \\ []) do
     with {name, options} <- options |> Keyword.pop!(:name),
          {url, options} <- options |> Keyword.pop!(:url),
-         {headers, options} <- options |> Keyword.pop(:headers, []),
-         true <- is_list(headers) and is_binary(url),
-         uri <- URI.parse(url),
-         {:ok, body} <- Jason.encode(request) do
-      %Finch.Request{
-        host: uri.host,
-        path: uri.path,
-        query: uri.query,
-        port: uri.port,
-        scheme: uri.scheme,
-        body: body,
-        headers: headers,
-        method: :post
-      }
+         {headers, options} <-
+           options |> Keyword.pop(:headers, [{"content-type", "application/json"}]),
+         {:ok, body} <- Jason.encode_to_iodata(request),
+         true <- is_list(headers) and is_binary(url) do
+      :post
+      |> Finch.build(url, headers, body)
       |> Finch.request(name, options)
+      |> handle_response()
     else
-      _ -> raise "sike"
+      error ->
+        error
     end
+  end
+
+  defp handle_response(error = {:error, _reason}), do: error
+
+  defp handle_response({:ok, %Finch.Response{status: 200, body: body}}) do
+    body
+    |> Jason.decode!()
+    |> Response.new()
+  rescue
+    Jason.DecodeError ->
+      {:error, "Could not decode response: no JSON: #{inspect(body)}"}
   end
 end
