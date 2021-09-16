@@ -1,6 +1,7 @@
 defmodule Jsonrpc.Error do
   @moduledoc """
-  `Jsonrpc.Error` represents a JSONRPC 2.0 error
+  `Jsonrpc.Error` represents a JSONRPC 2.0 error, as documented in the
+  [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification#error_object)
   """
 
   @type t :: %__MODULE__{
@@ -22,6 +23,7 @@ defmodule Jsonrpc.Error do
   @enforce_keys [:code]
   defstruct [:code, :type, :message, :data]
 
+  @doc false
   def new(error_data = %{"code" => code}) do
     %__MODULE__{
       code: code,

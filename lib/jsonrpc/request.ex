@@ -1,6 +1,7 @@
 defmodule Jsonrpc.Request do
   @moduledoc """
-  `Jsonrpc.Request` represents a JSONRPC 2.0 request
+  `Jsonrpc.Request` represents a JSONRPC 2.0 request, as documented in the
+  [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification#request_object)
   """
 
   @type t :: %__MODULE__{
