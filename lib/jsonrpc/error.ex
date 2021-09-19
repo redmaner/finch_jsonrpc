@@ -24,6 +24,9 @@ defmodule Jsonrpc.Error do
   defstruct [:code, :type, :message, :data]
 
   defmodule ResponseException do
+    @moduledoc """
+    An exception that is raised by `Jsonrpc.call1/2` when the response is a `Jsonrpc.Response` struct.
+    """
     defexception message: "The JSONRPC response contained an error"
 
     def new(error) do

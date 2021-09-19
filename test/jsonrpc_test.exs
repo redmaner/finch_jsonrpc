@@ -227,7 +227,9 @@ defmodule JsonrpcTest do
       {:error, :timeout}
     end)
 
-    assert Jsonrpc.call_raw(request, name: :test, url: "http://localhost:8080") == {:error, :timeout}
+    assert Jsonrpc.call_raw(request, name: :test, url: "http://localhost:8080") ==
+             {:error, :timeout}
+
     assert Jsonrpc.call(request, name: :test, url: "http://localhost:8080") == {:error, :timeout}
 
     assert_raise RuntimeError, fn ->
@@ -247,12 +249,14 @@ defmodule JsonrpcTest do
       {:ok, %Finch.Response{status: 200, body: "JSON go BRRRRRRR!"}}
     end)
 
-    assert Jsonrpc.call_raw(request, name: :test, url: "http://localhost:8080") == {:error, "Could not decode response: no JSON: \"JSON go BRRRRRRR!\""}
-    assert Jsonrpc.call(request, name: :test, url: "http://localhost:8080") == {:error, "Could not decode response: no JSON: \"JSON go BRRRRRRR!\""}
+    assert Jsonrpc.call_raw(request, name: :test, url: "http://localhost:8080") ==
+             {:error, "Could not decode response: no JSON: \"JSON go BRRRRRRR!\""}
+
+    assert Jsonrpc.call(request, name: :test, url: "http://localhost:8080") ==
+             {:error, "Could not decode response: no JSON: \"JSON go BRRRRRRR!\""}
 
     assert_raise RuntimeError, fn ->
       Jsonrpc.call!(request, name: :test, url: "http://localhost:8080")
     end
-
   end
 end
