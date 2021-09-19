@@ -10,7 +10,7 @@ by adding `finch_jsonrpc` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:finch_jsonrpc, "~> 0.1.0"}
+    {:finch_jsonrpc, "~> 0.2.0"}
   ]
 end
 ```

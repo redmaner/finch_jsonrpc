@@ -1,7 +1,7 @@
 defmodule Jsonrpc.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.2.0"
   @repo_url "https://github.com/redmaner/finch_jsonrpc"
 
   def project do
@@ -12,7 +12,6 @@ defmodule Jsonrpc.MixProject do
       description: "An HTTP JSON-RPC 2.0 client focused on performance, built on Finch.",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      name: :finch_jsonrpc,
       package: package(),
       docs: docs(),
       source_url: @repo_url,
@@ -60,6 +59,7 @@ defmodule Jsonrpc.MixProject do
 
   def package do
     [
+      name: :finch_jsonrpc,
       licenses: ["MIT"],
       links: %{"GitHub" => @repo_url}
     ]
@@ -67,9 +67,8 @@ defmodule Jsonrpc.MixProject do
 
   def docs do
     [
+      main: "Jsonrpc",
       source_ref: "v#{@version}",
-      source_url: @repo_url,
-      main: :finch_jsonrpc
-    ]
+      source_url: @repo_url    ]
   end
 end
