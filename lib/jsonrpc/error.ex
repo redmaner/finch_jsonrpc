@@ -23,6 +23,16 @@ defmodule Jsonrpc.Error do
   @enforce_keys [:code]
   defstruct [:code, :type, :message, :data]
 
+  defmodule ResponseException do
+    defexception message: "The JSONRPC response contained an error"
+
+    def new(error) do
+      %__MODULE__{
+        message: "The JSONRPC response(s) contained an error: #{inspect(error)}"
+      }
+    end
+  end
+
   @doc false
   def new(error_data = %{"code" => code}) do
     %__MODULE__{

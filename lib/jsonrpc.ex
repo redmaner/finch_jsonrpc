@@ -27,7 +27,12 @@ defmodule Jsonrpc do
   """
 
   require Logger
+
+  import Injector
+  inject Finch, as: FinchHTTP
+
   alias Jsonrpc.{Error, Response}
+  alias Jsonrpc.Error.ResponseException
 
   @doc false
   def child_spec(opts) do
@@ -69,7 +74,7 @@ defmodule Jsonrpc do
          true <- is_list(headers) and is_binary(url) do
       :post
       |> Finch.build(url, headers, body)
-      |> Finch.request(name, options)
+      |> FinchHTTP.request(name, options)
       |> handle_response()
     else
       error ->
@@ -132,6 +137,8 @@ defmodule Jsonrpc do
 
   defp unwrap_result({:error, %Response{error: error}}), do: {:error, error}
 
+  defp unwrap_result({:error, reason}), do: {:error, reason}
+
   defp unwrap_result({:ok, %Response{result: result}}), do: {:ok, result}
 
   defp unwrap_result(result), do: result
@@ -142,7 +149,16 @@ defmodule Jsonrpc do
     |> unwrap_raise_error()
   end
 
-  defp unwrap_raise_error({:error, reason}), do: raise(reason)
+  # Raise error when error is a list of responses
+  defp unwrap_raise_error({:error, reason}) when is_list(reason),
+    do: raise(ResponseException.new(reason))
+
+  # Raise error when error is JSONRPC error
+  defp unwrap_raise_error({:error, %Response{error: error}}),
+    do: raise(ResponseException.new(error))
+
+  # Raise everything else (json decode error / finch error)
+  defp unwrap_raise_error({:error, reason}), do: raise "#{inspect(reason)}"
 
   defp unwrap_raise_error({:ok, result}) when is_list(result), do: result
 
