@@ -6,7 +6,9 @@ defmodule FinchJsonrpc.MixProject do
       app: :finch_jsonrpc,
       version: "0.1.0",
       elixir: "~> 1.11",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -18,11 +20,22 @@ defmodule FinchJsonrpc.MixProject do
     ]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/mock_behaviour"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp aliases do
+    [
+      test: "test --no-start"
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:finch, "~> 0.8.1"},
       {:jason, "~> 1.2"},
+      {:injector, "~> 0.2.1"},
+      {:mox, "~> 1.0", only: [:test]},
       {:ex_doc, "~> 0.25.2", only: [:dev], runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}

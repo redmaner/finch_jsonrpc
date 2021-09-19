@@ -4,6 +4,9 @@ defmodule Jsonrpc.Request do
   [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification#request_object)
   """
 
+  import Injector
+  inject System
+
   @type t :: %__MODULE__{
           jsonrpc: String.t(),
           method: String.t(),
@@ -45,7 +48,7 @@ defmodule Jsonrpc.Request do
 
   defp add_id(req, :not_given) do
     req
-    |> Map.put(:id, 0)
+    |> Map.put(:id, System.os_time(:millisecond))
   end
 
   defp add_id(req, id) when is_binary(id) or is_integer(id) or is_nil(id) do

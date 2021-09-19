@@ -1,9 +1,15 @@
 defmodule RequestTest do
   use ExUnit.Case, async: true
 
+  import Mox
+  setup :verify_on_exit!
+
   alias Jsonrpc.Request
 
   test "New request with method, params and or id" do
+    SystemMock
+    |> expect(:os_time, fn _unit -> 0 end)
+
     assert Request.new(method: "test") == %Request{
              jsonrpc: "2.0",
              method: "test",
@@ -77,6 +83,9 @@ defmodule RequestTest do
   end
 
   test "Auto ids" do
+    SystemMock
+    |> expect(:os_time, 3, fn _unit -> 0 end)
+
     requests =
       Request.new(method: "test")
       |> Request.new(method: "testTwo")
