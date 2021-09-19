@@ -1,13 +1,21 @@
-defmodule FinchJsonrpc.MixProject do
+defmodule Jsonrpc.MixProject do
   use Mix.Project
+
+  @version "0.1.0"
+  @repo_url "https://github.com/redmaner/finch_jsonrpc"
 
   def project do
     [
-      app: :finch_jsonrpc,
-      version: "0.1.0",
-      elixir: "~> 1.11",
+      app: :jsonrpc,
+      version: @version,
+      elixir: "~> 1.10",
+      description: "An HTTP JSON-RPC 2.0 client focused on performance, built on Finch.",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      name: :finch_jsonrpc,
+      package: package(),
+      docs: docs(),
+      source_url: @repo_url,
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -39,7 +47,7 @@ defmodule FinchJsonrpc.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:finch, "~> 0.8.1"},
+      {:finch, "~> 0.8"},
       {:jason, "~> 1.2"},
       {:injector, "~> 0.2.1"},
       {:mox, "~> 1.0", only: [:test]},
@@ -47,6 +55,21 @@ defmodule FinchJsonrpc.MixProject do
       {:ex_doc, "~> 0.25.2", only: [:dev], runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+    ]
+  end
+
+  def package do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => @repo_url}
+    ]
+  end
+
+  def docs do
+    [
+      source_ref: "v#{@version}",
+      source_url: @repo_url,
+      main: :finch_jsonrpc
     ]
   end
 end
